@@ -1,0 +1,13 @@
+@media (width < 1400px) {
+    body {
+        font-family: 'Courier New', Courier, monospace;
+        background-color: aquamarine;
+    }
+}
+
+@media not (width < 1400px) {
+    body {
+        font-family:Georgia, 'Times New Roman', Times, serif;
+        background-color: navajowhite;
+    }
+}
