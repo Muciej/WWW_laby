@@ -3,8 +3,10 @@
 
 <head>
     <meta charset="utf-8">
-    <title>Zainteresowania</title>
+    <title>Projekty</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="../css/normalize.css" rel="stylesheet" type="text/css">
+    <link href="../css/style.css" rel="stylesheet" type="text/css">
 </head>
 
 <body>
@@ -18,15 +20,290 @@
         </nav>
     </header>
 
+    <article>
+        <h1>Kompilator</h1>
+        <p>
+            Jest to kompilator prostego języka imperatywnego stworzony w ramach projektu na przedmiot Języki Formalne i
+            Teoria Translacji.
+            Język zaproponowany przez wykładowcę zawiera instrukcje warukowe if, pętli while oraz until, procedury (bez
+            rekurencji) oraz
+            pozwala na wykonywanie prostych działań arytmetycznych. Program kompilowany jest do assemblera maszyny
+            wirtualnej stworzonej
+            przez wykładowcę. Kompilator wykrywa błędy składniowe oraz błędy związane z brakiem deklaracji zmiennych.
+        </p>
+    <code>
+void handle_proc_head(const string& func_name){
+    Procedure_obj* proc = proc_check(func_name);
+    if(curr_procedure != nullptr){  //call to function
+        if(proc == nullptr){
+            string s = "Usage of undeclared procedure " + func_name;
+            yyerror(s.c_str());
+        } else {
+            auto* ins = new Procedure_ins{proc};
+            while(!var_stack.empty()){
+                Variable* var = var_stack.top();
+                var->is_used = false;
+                var->is_declared = MAYBE;
+                ins->vars_to_use.push_back(var);
+                var_stack.pop();
+            }
+              comm_containers.top()->push_back(ins);
+        }
+    } else {    //declaration
+        if(proc == nullptr){    //new procedure
+            auto* p = new Procedure_obj{func_name};
+            defined_procedures.push_back(p);
+            curr_procedure = proc_check(func_name);
+            comm_containers.push(&curr_procedure->body);
+            Variable* var_p;
+            while(!var_stack.empty()){
+                var_p = var_stack.top();
+                var_stack.pop();
+                var_p->range = curr_procedure->identifier;
+            }
+        } else{
+            string s = "Second declaration of procedure " + func_name;
+            yyerror(s.c_str());
+        }
+    }
+}
+    </code>
+    </article>
+
+    <article>
+        <h1>MarchApp</h1>
+        <div class="images-container-vertical">
+            <img class="img" src="../materials/MarchApp/app1.png" alt="Zrzut ekranu z aplikacji">
+            <img class="img" src="../materials/MarchApp/app2.png" alt="Zrzut ekranu z aplikacji">
+            <img class="img" src="../materials/MarchApp/app3.png" alt="Zrzut ekranu z aplikacji">
+
+        </div>
+        <p>
+            MarchApp to aplikacja wspomagająca organizację wydarzeń pokroju marszów pieszych, czy rajdów rowerowych.
+            Pomysł na
+            aplikację zrodził się, gdy sam byłem wolontariuszem na tego typu imprezie i razem z innymi wolontariuszami
+            mieliśmy
+            zaznaczać obecność uczestników na kolejnych punktach kontrolnych na papierowych listach. Szybko okazało się
+            między innymi,
+            że niektórzy uczestnicy pomijają część punktów kontrolny oraz, że takie podejście obardzone jest ludzkim
+            błędem, co razem
+            doprowadziło do rozbieżności między listami z punktów kontrolnych. 
+        </p>
+        <p>
+            MarchApp stworzyliśmy w 6 osobowej grupie
+            w ramach projektu
+            zaliczeniowego na przedmiot Programowanie Zespołowe. Aplikacja pozwala między innymi na:
+        </p>
+        <ul>
+            <li>utrzymywanie bazy danych uczestników oraz pracowników wydarzenia</li>
+            <li>tworzenie oraz odczyt kodów QR dla poszczególnych uczestników</li>
+            <li>skanowanie kodów QR w celu odnotowania obecności danego uczestnika na punkcie kontrolnym</li>
+            <li>stały podgląd statystyk poszczególnych punktów kontrolnych jak i całego wydarzenia</li>
+        </ul>
+        <h2>Przykładowe fragmenty kodu z klasy odpowiadającej za komunikację z bazą danych, które pisałem</h2>
+        <code>
+override fun executeQuery() {
+    if (dbConnection?.isClosed == true){
+        startConnection()
+    }
+    try {
+        println("Executing query")
+        if(currQuery?.execute() == true){
+            currentRes = currQuery?.resultSet
+        }
+    } catch (e: SQLException){
+        e.printStackTrace()
+        println("Could not execute query")
+        throw SQLException("Error during executing query")
+    }
+    if(currentRes == null || !currentRes!!.next()){
+        currentRes = null;
+        println("Query with no or empty result");
+    }
+}
+        </code>
+
+        <code>
+override fun getAnswer(): Vector<Vector<String>> {
+    if (currentRes == null)
+        throw Exception("No result!")
+    val metadata = currentRes!!.metaData
+    val colNo = metadata.columnCount
+    val answer = Vector<Vector<String>>()
+    answer.add(getCurrRow(colNo))
+    while(currentRes!!.next()){
+        answer.add(getCurrRow(colNo))
+    }
+    return answer
+}
+        </code>
+    </article>
+
+    <article>
+        <h1>Zero Fogs Given</h1>
+        <p>
+            Zero Fogs Given to gra stworzona przeze mnie i moich kolegów w liceum w ramach porjektu Zwolnieni z Teorii.
+            Jest to gra typu tower defense, w której naszym zadaniem jest powstrzymanie przeciwników reprezentujących
+            różne czynniki
+            wpływające na zanieczyszczenie planety takie jak samoloty, śmieci czy smog przy pomocy wież reprezentujących
+            rozwiązania
+            tych problemów takie jak filtry powietrza, komunikacja zbiorowa, lasy, czy różne sposoby ograniczania
+            zaśmiecania.
+        </p>
+        <div class="images-container-horizontal">
+            <img class="img" src="../materials/ZeroFogsGiven/ZFG_menu.jpg" alt="Menu gry">
+            <img class="img" src="../materials/ZeroFogsGiven/ZFG_round1.jpg" alt="Rozgrywka">
+        </div>
+        <p>
+            Zero Fogs Given tworzyłem razem z moimi 5 kolegami i dla nas wszystkich był to pierwszy większy projekt
+            programistyczny.
+            Realizacja projektu połączona była z realizacją kursu Digital Skills stworzonego przez Google oraz Project
+            Management
+            Principles stworzonego przez Project Management Institute.
+
+        </p>
+        <div class="images-container-horizontal">
+            <img class="img" src="../materials/ZeroFogsGiven/ZFG_pause.jpg" alt="Menu pauzy">
+            <img class="img" src="../materials/ZeroFogsGiven/ZFG_win.jpg" alt="Ukończony poziom">
+        </div>
+    </article>
+
+    <article>
+        <h1>Chinese checkers</h1>
+        <p>
+            Jest to program umożliwiający wspólne granie w chińskie warcaby dla od 2 do 6 graczy. Aplikacja
+            składa się
+            z dwóch części:
+        </p>
+        <ul>
+            <li>serwera kontrolującego przebieg gry</li>
+            <li>aplikacji klienta, która wyświetla przebieg gry i pozwala na wykonywanie ruchów</li>
+        </ul>
+        <p>
+            Klienci oraz serwer komunikują się między sobą przy wykorzystaniu socketów.
+        </p>
+    </article>
+
+    <article>
+        <h1>Mastermind</h1>
+        <p>
+            Jest to program umożliwiający nam rozegranie partii gry Mastermind przeciwko komputerowi w terminalu. Celem
+            komputera
+            jest odganąć kod złożony z 4 cyfr z zakresu od 1 do 4 (parametry te można w programie regulować - oczywiście
+            w przypadku
+            ich zwiększenia rośnie liczba ruchów potrzebnych do zgadnięcia).
+            w najmniejszej liczbie ruchów. Po każdej próbie zgadnięcia, podajemy komputerowi liczbę białych oraz
+            czerwonych
+            pinezek (nazewnictwo z planszowej wersji gry). Białe i czerwone pinezki symbolizują liczbę cyfr w
+            proponowanej
+            przez komputer odpowiedzi, które faktycznie znajdują się w naszym kodzie z tą różnicą, że czerwona pinezka
+            oznacza dodatkowo, że
+            cyfra znajduje się na odpowiedniej pozycji (pinezki same w sobie nie oznaczają pozycji cyrfy w kodzie,
+            jedynie ilość).
+        </p>
+        <div class="images-container-horizontal">
+            <img class="img" src="../materials/small_projects/mastermind_cheat.png" alt="Mastermind win example">
+            <img class="img" src="../materials/small_projects/mastermind_win.png" alt="Mastermind cheat example">
+        </div>
+        <p>
+            Działanie programu zgadującego opiera się na utrzymywaniu i aktualizowaniu zbioru kodów, które wciąż są
+            możliwe, tzn. takich,
+            które w każdej z poprzednich prób skutkowałyby takimi samymi liczbami pinezek czerwonych i białych. Jako
+            kolejną odpowiedź
+            algorytm podaje pierwszą z brzegu odpowiedź, która dalej jest w zbiorze. Dzięki takiemu rozwiązaniu
+            problemu, program potrafi
+            wykryć, że oszukujemy i podaliśmy złą liczbę pinezek, ponieważ wtedy zbiór pozostałych rozwiązań w którymś
+            kroku stanie się pusty.
+            Komputer zawsze znajduje poprawną odpowiedź w maksymalnie 5 ruchach. Program można by jeszcze zoptymalizować
+            tak, żeby zgadnięcie
+            następowało w 4 ruchach przez modyfikację sposobu doboru kolejnej odpowiedzi. Zamiast brać pierwszy z brzegu
+            kod, można rozważyć, który
+            spowoduje odrzucenie największej liczby innych kodów jeśli okaże się nieprawidłowy.
+        </p>
+    </article>
+
+    <article>
+        <h1>Algorytmy metaheurystyczne</h1>
+        <p>
+            Jest to kilka programów stworzonych na potrzeby przemiotu Algorytmy Metaheurystyczne, które stworzyłem razem
+            z kolegą.
+            Skupiają się one na problemie komiwojażera (problem odwiedzenia jak największej liczby miast pokonując jak
+            najkrótszą
+            drogę). Przede wszystkim w skład projektu wchodzi program pozwalający wykonywać następujące algorytmy
+            metaheurystyczne:
+        </p>
+        <ul>
+            <li>random</li>
+            <li>nearest neighbour</li>
+            <li>2-opt/3-opt</li>
+            <li>taboo search (z różnymi parametrami)</li>
+            <li>algorytm genetyczny (z różnymi parametrami)</li>
+        </ul>
+        <p>
+            Ponadto, projekt zawiera moduł pozwalający wyświetlić znalezione rozwiązanie (dla euklidesowych egzemplarzy
+            problemu), moduł tworzący wykresy porównawcze algorytmów oraz moduł obliczający test Wilkinsona.
+        </p>
+
+        <h2>Pętla główna algorytmu Taboo Search</h2>
+        <code>
+do {
+    if (tspData.isSymmetric()) neighbours = neighbourhood.getNeighbourhoodSymmetric(result);
+    else neighbours = neighbourhood.getNeighbourhoodAsymmetric(result);
+    if (!chooseBestNeighbour(neighbours)) return result;
+} while ( !stopFunction());
+        </code>
+
+        <h2>Pętla główna algorytmu genetycznego</h2>
+        <code>
+do{
+    if(evaluator != null)
+        currentPopulation = evaluator.evaluatePopulation(currentPopulation, oldPopulation);
+    List<Pair> parents = selection.getParents(currentPopulation);
+    currentPopulation = crossover.getNewPopulation(parents);
+    GeneticResult bestRes = returnBest();
+    if(bestResult == null || bestRes.objFuncResult < bestResult.objFuncResult) {
+        bestResult = bestRes.clone();
+    }
+    filler.fillPopulation(currentPopulation, oldPopulation);
+    if(mutation != null)
+        currentPopulation = mutation.getMutatedPopulation(currentPopulation);
+    if(longTermEditor != null && longTermChecker != null) {
+        if(longTermChecker.check(currentPopulation, bestResult)) {
+            currentPopulation = longTermEditor.getChanged(currentPopulation);
+        }
+    }
+    oldPopulation = currentPopulation;
+} while(!stopFunction.check());
+        </code>
+    </article>
+
+    <article>
+        <h1>DEMO systemu rekrutacyjnego</h1>
+        <p>
+            Jest to projekt zaliczeniowy na przedmiot bazy danych. Symuluje on prosty system rekrutacji studentów na
+            uczelnię.
+            Dostępne są 3 poziomy logowania: student, pracownik oraz administrator. Dla każdego z nich aplikacja
+            udostępnia inną
+            funkcjonalność i tak np. student może wybrać studia, na które chce się zarekrutować oraz modifykować swoje
+            dane oraz wyniki
+            maturalne.
+        </p>
+        <div class="images-container-horizontal">
+            <img class="img" src="../materials/small_projects/jsosdemo.png" alt="JSOS demo">
+            <img class="img" src="../materials/small_projects/jsosdemo2.png" alt="JSOS demo">
+        </div>
+    </article>
+
     <footer>
         <p>
             Kontakt
-            <ul>
-                <li>maciej.jozefkowicz@gmail.com</li>
-                <li>nr telefonu: 666 356 526</li>
-                <li>github: https://github.com/Muciej</li>
-            </ul>
         </p>
+        <ul>
+            <li>e-mail: maciej.jozefkowicz@gmail.com</li>
+            <li>nr telefonu: 666 356 526</li>
+            <li><a href="https://github.com/Muciej">Github</a> </li>
+            <li><a href="https://www.linkedin.com/in/maciej-j%C3%B3zefkowicz-33769726a">LinkedIn</a></li>
+        </ul>
 
     </footer>
 </body>
